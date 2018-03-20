@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="UTF-8">
     <title>Neighborhood Map</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
     <!-- Bootstrap -->
@@ -42,13 +43,25 @@
             </li>
           </ul>
           <form class="form-inline my-2 my-md-0">
-            <input class="form-control" type="text" placeholder="Search">
+            <input class="form-control" type="text" placeholder="Search" data-bind="textInput:searchTextBox">
+            <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:searchTextBoxSubmit">Submit</button></span>
           </form>
         </div> <!-- navbar-collapse -->
       </div> <!-- container -->
     </nav>
-    <!--- Google Map -->
-    <div id="map">
+    <div class="row">
+      <!-- sidenav -->
+      <div class="col-md-3 sidenav">
+          <h2>Places</h2>
+          <ul class="list-group" data-bind="foreach: placesList">
+            <li class="list-group-item" data-bind="click: openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span data-bind="text:name"></span></li>
+          </ul>
+      </div>
+      <!--- Google Map -->
+      <div class="col-md-9">
+        <div id="map">
+        </div>
+      </div>
     </div>
     <!-- Jquery -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -58,7 +71,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <!-- Google Maps API -->
     <script async defer
-      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMedjoFBohd-qSUDsSCiYfQooow6GBQZc&callback=initMap">
+      src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCMedjoFBohd-qSUDsSCiYfQooow6GBQZc&callback=initApp">
     </script>
   </body>
 </html>
