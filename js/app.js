@@ -11,22 +11,12 @@ const initialPlaces = [
 // Storing all data into an object
 const Place = function(data){
 	this.name = ko.observable(data.name);
+	this.location = ko.observable(data.geometry.location);
 	this.lat = ko.observable(data.geometry.location.lat);
 	this.lng = ko.observable(data.geometry.location.lng);
 	this.formatted_address = ko.observable(data.formatted_address);
 	this.icon = ko.observable(data.icon);
 	this.marker = ko.observable(data.marker);
-	this.openInfoWindow = function(){
-
-		let marker = this.marker();
-		let infoWindow = new google.maps.InfoWindow();
-
-		marker.setAnimation(google.maps.Animation.BOUNCE);
-		setTimeout(function(){ marker.setAnimation(null); }, 3500);
-
-		infoWindow.open(map, marker);
-		infoWindow.setContent(this.name());
-	}
 }
 
 const ViewModel = function(){
@@ -39,24 +29,25 @@ const ViewModel = function(){
 	self.placesList = ko.observableArray();
 
 	// Show Markers
-	self.showMarkers = function(markers){
-		markers.forEach(function(marker){
-			marker.setMap(map);
-		})
+	self.showMarkers = function(){
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+          markers[i].setVisible(true);
+        }
 	}
 
 	// Hide Markers
-	self.hideMarkers = function(markers){
-		markers.forEach(function(marker){
-			marker.setMap(null);
-			marker.setVisible(false);
-		})
+	self.hideMarkers = function(){
+		 for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(null);
+          markers[i].setVisible(false);
+        }
 	}
 
-	// Markers Creation
+	// Marker Creation
 	self.createMarkers = function(places){
-		self.hideMarkers(markers)
-		//let bounds = new google.maps.LatLngBounds();
+		self.hideMarkers()
+		// let bounds = new google.maps.LatLngBounds();
 		// Iterate through places and create markers for each
 		for (let i = 0; i < places.length; i++){
 			let place = places[i];
@@ -66,7 +57,7 @@ const ViewModel = function(){
 				animation: google.maps.Animation.DROP,
 				id: i
 			});
-			// Add click listeners to generate maker info windows
+			// Add click listeners to generate info windows
 			marker.addListener('click', function(){
 				infoWindow.open(map, this);
 				infoWindow.setContent(this.title);
@@ -75,7 +66,7 @@ const ViewModel = function(){
 			place.marker = marker;
 			self.placesList.push(new Place(place));
 		}
-		self.showMarkers(markers);
+		self.showMarkers();
 		//map.fitBounds(bounds)
 	}
 
@@ -94,15 +85,30 @@ const ViewModel = function(){
 			}
 			self.createMarkers(places);
 			self.returnResults(places);
-		})
+		});
 	}
 
 	// For sidenav results
 	self.returnResults = function(places){
+		// Clear list of places
 		self.placesList.removeAll()
+		// Push new list of Place objects to placesList array
 		places.forEach(function(place){
 			self.placesList.push(new Place(place));
 		});
+	}
+
+	// Open Window Method
+	self.openInfoWindow = function(place){
+		let marker = place.marker();
+		marker.setAnimation(google.maps.Animation.BOUNCE);
+		setTimeout(function(){ marker.setAnimation(null); }, 1500);
+
+		map.setCenter(place.location());
+		map.setZoom(16);
+
+		infoWindow.open(map, marker);
+		infoWindow.setContent(place.name());
 	}
 
 	self.createMarkers(initialPlaces);

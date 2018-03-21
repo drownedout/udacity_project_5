@@ -2,11 +2,12 @@
 	padding: 1rem 2rem;
 	height:100vh;
 	max-height: 100vh;
-	overflow: hidden;
 }
 
 .sidenav > h2 {
-	margin: 1rem 2rem;
+	margin: 1rem .5rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid #000;
 }
 
 .place-icon {
@@ -14,6 +15,16 @@
 	width: 20px;
 	display: inline-block;
 	margin-right: 10px;
+}
+
+.btn-row {
+	margin: 1rem auto;
+	text-align: center;
+}
+
+.list-group {
+	height: 90%;
+	overflow: scroll;
 }
 
 .list-group-item:hover{
