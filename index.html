@@ -15,7 +15,7 @@
   </head>
   <body>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-info">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <div class="container">
         <a class="navbar-brand" href="#">Neighborhood Map</a>     
           <form class="form-inline my-2 my-md-0">
@@ -30,7 +30,7 @@
       <div class="col-md-3 sidenav">
           <h2>Places</h2>
           <div class="btn-row">
-            <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:showMarkers">Show Markers</button></span> <span class="input-group-btn"><button class="btn btn-primary" type="button" data-bind="click:hideMarkers">Hide Markers</button></span>
+            <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:showMarkers">Show Markers</button></span> <span class="input-group-btn"><button class="btn btn-prime" type="button" data-bind="click:hideMarkers">Hide Markers</button></span>
           </div>
           <ul class="list-group" data-bind="foreach: placesList">
             <li class="list-group-item" data-bind="click: $parent.openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span data-bind="text:name"></span></li>

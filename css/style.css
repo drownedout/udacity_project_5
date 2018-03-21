@@ -1,6 +1,20 @@
+.navbar {
+	padding: 1rem 0;
+}
+
+.bg-dark {
+	background-color: #343838;
+}
+
+.form-inline > .input-group-btn > .btn-secondary{
+	margin-left: .5rem;
+	padding-left: 1.5rem;
+	padding-right: 1.5rem;
+}
+
 .sidenav {
 	padding: 1rem 2rem;
-	height:100vh;
+	min-height: 80vh;
 	max-height: 100vh;
 }
 
@@ -22,6 +36,11 @@
 	text-align: center;
 }
 
+.btn-prime {
+	background-color: #00B4CC;
+	color: #fff;
+}
+
 .list-group {
 	height: 90%;
 	overflow: scroll;
@@ -33,7 +52,7 @@
 }
 
 #map {
-	height:100vh;
+	min-height: 90vh;
 	max-height: 100vh;
 	width: 100%;
 	padding: 2%;
