@@ -12,6 +12,8 @@ $ git clone https://github.com/drownedout/udacity_project_5.git
 
 Open **index.html** and have fun playing around. You can search for anything you want by utilizing the search bar on the upper nav. You can also keep track of your favorite locations by clicking the heart icon next to each result.
 
+If you change your mind, you can always remove a location from your favorites by clicking the trash icon.
+
 ## APIs
 
 This app uses the Google Maps and Wikipedia APIs
