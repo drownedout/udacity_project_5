@@ -1,0 +1,70 @@
+@media only screen and (max-width: 740px) {
+    .sidenav {
+    	position: fixed;
+    	top:0;
+		left: -100%;
+		z-index: 9999;
+		background: #fff;
+		min-height: 100vh;
+		width: 60%;
+		text-align: left;
+    }
+    .sidenav > h2 {
+    	margin-left: 0;
+    }
+    .sidenav > .btn-row {
+    	margin: 0;
+    	text-align: left;
+    }
+    .sidenav > .btn-row > .input-group-btn {
+    	display: block;
+    	margin: 1rem 0;
+    }
+    .menu-open {
+    	left: 0;
+    }
+    .main-open {
+    	left: 60%;
+    }
+    .toggler {
+		display: inline-block;
+	}
+	#toggle-off {
+		display: block;
+	}
+	.navbar{
+		padding: 1rem;
+	}
+	.navbar-brand{
+		display: none;
+	}
+	.form-inline {
+		width: 80%;
+	}
+	.form-control {
+		display: inline-block;
+		width: 70%;
+	}
+	.form-inline > .input-group-btn {
+		width: 30%;
+	}
+	.form-inline > .input-group-btn > .btn-secondary {
+		width: 100%;
+		padding: .4rem .5rem;
+		margin:0;
+	}
+}
+
+@media only screen and (max-width: 1244px) {
+	.sidenav > h2 {
+    	margin-left: 0;
+    }
+    .sidenav > .btn-row {
+    	margin: 0;
+    	text-align: left;
+    }
+    .sidenav > .btn-row > .input-group-btn {
+    	display: block;
+    	margin: 1rem 0;
+    }
+}
