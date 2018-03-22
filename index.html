@@ -37,22 +37,23 @@
             <i class="far fa-arrow-alt-circle-left fa-2x"></i>
           </button> 
           <h2>Places</h2>
+          <div id="street-view-image"></div>
           <div class="btn-row">
             <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:showMarkers">Show Markers</button></span> <span class="input-group-btn"><button class="btn btn-prime" type="button" data-bind="click:hideMarkers">Hide Markers</button></span>
-          </div>
+          </div> <!-- btn-row -->
           <div class="favorites">
             <h4>Favorites</h4>
             <ul class="list-group" data-bind="foreach: favoritePlaces"><li class="list-group-item" data-bind="click: $parent.openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span data-bind="text:name"></span> <i class="far fa-trash-alt" data-bind="click: $parent.removeFavorite"></i></li></ul>
             <button class="btn btn-danger" type="button" data-bind="click:clearFavorites">Clear Favorites</button>
-          </div>
+          </div> <!-- favorites -->
           <div class="search-results">
             <h4>Search Results</h4>
             <ul class="list-group" data-bind="foreach: placesList">
-              <li class="list-group-item" data-bind="click: $parent.openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span class="location-name" data-bind="text:name"></span> <span><i class="far fa-heart" data-bind="click: $parent.addToFavorites"></i></span></li>
+              <li class="list-group-item" data-bind="click: $parent.openSideBarInfo"><img class="place-icon" data-bind="attr:{src: icon}" /><span class="location-name" data-bind="text:name"></span> <span><i class="far fa-heart" data-bind="click: $parent.addToFavorites"></i></span></li>
             </ul>
             <button class="btn btn-danger" type="button" data-bind="click:clearResults">Clear Results</button>
-          </div>
-      </div>
+          </div> <!-- search-results -->
+      </div> <!-- sidenav -->
       <!--- Google Map -->
       <div class="col-md-9">
         <div id="map">

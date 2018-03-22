@@ -22,14 +22,21 @@
 
 .sidenav {
 	padding: 1rem 2rem;
-	min-height: 80vh;
+	height: 100vh;
+	max-height: 100vh;
 	transition: ease-in-out all .4s;
+	overflow-y: scroll;
 }
 
 .sidenav > h2 {
 	margin: 1rem .5rem;
 	padding-bottom: 1rem;
 	border-bottom: 1px solid #000;
+}
+
+#street-view-image{
+	width: 100%;
+	height: 200px;
 }
 
 .place-icon {
@@ -41,7 +48,6 @@
 
 .btn-row {
 	margin: 1rem auto;
-	text-align: center;
 }
 
 .btn-prime {
@@ -55,7 +61,6 @@
 }
 
 .list-group {
-	overflow-y: scroll;
 	max-height: 35vh;
 	margin-bottom: 1rem;
 }
@@ -82,7 +87,7 @@
 }
 
 #map {
-	min-height: 90vh;
+	min-height: 100vh;
 	width: 100%;
 	padding: 2%;
 }

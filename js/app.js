@@ -1,8 +1,7 @@
 "use strict";
 
-// Global Vars
+// Global Var
 let map;
-let infoWindow;
 
 // SideNav Toggle - for responsive navigation
 
@@ -25,7 +24,7 @@ function sideMenuOpen(){
 }
 
 // Inital locations to be populated on the map
-const initialPlaces = [
+const initialLocations = [
 	{
 		name: "Smithsonian National Zoological Park",
 		geometry: {location: {lat: 38.931083, lng: -77.049731}},
@@ -58,7 +57,7 @@ const initialPlaces = [
 	}	
 ];
 
-// Storing all data for Places into an object
+// Storing all data for Place into an object
 const Place = function(data){
 	this.name = ko.observable(data.name);
 	this.location = ko.observable(data.geometry.location);
@@ -113,13 +112,14 @@ const ViewModel = function(){
 
 	// Marker Creation, list population
 	self.createMarkers = function(places){
+		// Hide Markers
 		self.hideMarkers()
+		markers = []
 		// Clears placesList
 		self.placesList.removeAll()
 		// Iterate through places and create markers for each
 		for (let i = 0; i < places.length; i++){
 			let place = places[i];
-			console.log(place.icon)
 			let marker = new google.maps.Marker({
 				title: place.name,
 				position: place.geometry.location,
@@ -131,7 +131,7 @@ const ViewModel = function(){
 			marker.addListener("click", function(){
 				map.setCenter(this.position);
 				map.setZoom(16);
-				self.getWikipedia(place, place.name, place.formatted_address);
+				self.getWikipedia(place.name, place.formatted_address);
 				infoWindow.open(map, this);
 			});
 			// Push markers to markers array
@@ -141,28 +141,28 @@ const ViewModel = function(){
 			self.placesList.push(new Place(place));
 		}
 		self.showMarkers();
+		self.getStreetView(self.placesList()[0])
 	}
 
 	// Wikipedia API
-	self.getWikipedia = function(place, name, address){
+	self.getWikipedia = function(name, address){
 		// Fires off Ajax request
 		$.ajax({
-			url: `https://en.wikipedia.org/w/api.php?action=opensearch&search=${name}&format=json&callback=wiwikiCallback`,
-			dataType: "jsonp",
-			jsonp: "callback"
+			url: `https://en.wikipedia.org/w/api.php?action=opensearch&search=${name}&format=json`,
+			dataType: "jsonp"
 		}).done(function(res){
 			// Concats content for info window - wikiSnippet and wikiLink utilize inline conditionals
 			// to see if any data is available to be retrieved, else returns empty string
-			let wikiSnippet = res[2][0] ? `<p class='info'>${res[2][0]}</p>` : "";
+			let wikiSnippet = res[2][0] ? res[2][0] : "";
 			let wikiLink = res[1][0] ? `<p class='info'><a href='https://en.wikipedia.org/wiki/${res[1][0]}'>Read More</></p>` : "";
 			let infoWindowContent = `<p class='info wiki-title'>${name}</p>
-									 <p class='info'>${address}</p>`
-									 + wikiSnippet
+									 <p class='info'>${address}</p>
+									 <p class='info'>${wikiSnippet}</p>`
 									 + wikiLink;
 			infoWindow.setContent(infoWindowContent);
 		}).fail(function(err){
 			console.log(err);
-		})
+		});
 	}
 
 	// Search Box
@@ -173,6 +173,7 @@ const ViewModel = function(){
 
 	// Search Submit
 	self.searchTextBoxSubmit = function(){
+		// placesService(request, callback)
 		placesService.textSearch({
 			query: self.searchTextBox(),
 			bounds: map.getBounds()
@@ -192,19 +193,46 @@ const ViewModel = function(){
 		setTimeout(function(){ marker.setAnimation(null); }, 1500);
 		map.setCenter(place.location());
 		map.setZoom(16);
-		self.getWikipedia(place, place.name(), place.formatted_address());
+		self.getWikipedia(place.name(), place.formatted_address());
 		infoWindow.open(map, marker);
+	}
+
+	self.getStreetView = function(place){
+		if(google.maps.StreetViewStatus.OK){
+			new google.maps.StreetViewService();
+			let radius = 50;
+			let streetViewLocation = place.location();
+			let streetViewOptions = {
+				position: streetViewLocation,
+				pov: {
+					heading: 40,
+					pitch: 0
+				}
+			}
+			let streetViewPanorama = new google.maps.StreetViewPanorama(
+				document.getElementById('street-view-image'), streetViewOptions
+			);
+		}
+	}
+
+	self.openSideBarInfo = function(place){
+		self.openInfoWindow(place);
+		self.getStreetView(place);
 	}
 
 	// Takes a place and adds it to the favoritePlaces array
 	self.addToFavorites = function(place){
-		self.favoritePlaces.push(place);
+		// Checks to see if place already exists. If not, add to favorites
+		let index = self.favoritePlaces.indexOf(place);
+		if (index < 0){
+			self.favoritePlaces.push(place);
+		}
 	}
 
 	// Removes a place from the favoritePlaces arrays
 	self.removeFavorite = function(place){
 		let index = self.favoritePlaces.indexOf(place);
-		console.log(index)
+		// Checks to see if place alreay exists - if it does, remove from favorites
 		if(index > -1){
 			self.favoritePlaces.splice(index, 1);
 		}
@@ -223,7 +251,7 @@ const ViewModel = function(){
 
 
 	// Initialize app with default places
-	self.createMarkers(initialPlaces);
+	self.createMarkers(initialLocations);
 
 }
 
