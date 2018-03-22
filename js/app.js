@@ -1,14 +1,64 @@
-'use strict';
+"use strict";
 
 // Global Vars
 let map;
 let infoWindow;
 
+// SideNav Toggle - for responsive navigation
+
+function sideMenuOpen(){
+	$(document).ready(function() {
+        $("#toggler").bind("click",function(){
+        	// $(this).toggleClass("rotated");
+        	$(".sidenav").toggleClass("menu-open");
+        	return false;
+        });
+    });
+	$("#toggle-off").bind("click",function(){
+	  $(".sidenav").toggleClass("menu-open");
+	  return false;
+	});
+	$(".list-group-item").bind("click",function(){
+	  $(".sidenav").toggleClass("menu-open");
+	  return false;
+	});
+}
+
+// Inital locations to be populated on the map
 const initialPlaces = [
-	
+	{
+		name: "Smithsonian National Zoological Park",
+		geometry: {location: {lat: 38.931083, lng: -77.049731}},
+		formatted_address: "3001 Connecticut Ave NW, Washington, DC 20008",
+		icon: "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png"
+	},
+	{
+		name: "The White House",
+		geometry: {location: {lat: 38.8977, lng: -77.0365}},
+		formatted_address: "1600 Pennsylvania Ave NW, Washington, DC 20500",
+		icon: "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png"
+	},
+	{
+		name: "United States Capitol",
+		geometry: {location: {lat: 38.889819, lng: -77.009066}},
+		formatted_address: "East Capitol St NE & First St SE, Washington, DC 20004",
+		icon: "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png"
+	},
+	{
+		name: "Lincoln Memorial",
+		geometry: {location: {lat: 38.889306, lng: -77.050111}},
+		formatted_address: "2 Lincoln Memorial Cir NW, Washington, DC 20037",
+		icon: "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png"
+	},
+	{
+		name: "Washington Monument",
+		geometry: {location: {lat: 38.889469, lng: -77.035258}},
+		formatted_address: "2 15th St NW, Washington, DC 20024",
+		icon: "https://maps.gstatic.com/mapfiles/place_api/icons/generic_business-71.png"
+	}	
 ];
 
-// Storing all data into an object
+// Storing all data for Places into an object
 const Place = function(data){
 	this.name = ko.observable(data.name);
 	this.location = ko.observable(data.geometry.location);
@@ -26,13 +76,15 @@ const ViewModel = function(){
 	let markers = [];
 	let infoWindow = new google.maps.InfoWindow();
 
+	// Initialize arrays
 	self.placesList = ko.observableArray();
+	self.favoritePlaces = ko.observableArray();
 
 	// Make Marker
 	function makeMarkerIcon(markerColor) {
-		var markerImage = new google.maps.MarkerImage(
-		'http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|'+ markerColor +
-		'|40|_|%E2%80%A2',
+		let markerImage = new google.maps.MarkerImage(
+		`http://chart.googleapis.com/chart?chst=d_map_spin&chld=1.15|0|${markerColor}
+		|40|_|%E2%80%A2`,
 		new google.maps.Size(21, 34),
 		new google.maps.Point(0, 0),
 		new google.maps.Point(10, 34),
@@ -40,16 +92,12 @@ const ViewModel = function(){
 		return markerImage;
     }
 
-    // "Palette #1: 343838,005F6B,008C9E,00B4CC,00DFFC"
-    // "Palette #3: FF4E50,FC913A,F9D423,EDE574,E1F5C4"
-    // "Palette #4: 99B898,FECEA8,FF847C,E84A5F,2A363B"
-
     // Default Marker Color
-    var defaultIcon = makeMarkerIcon('00B4CC');
+    let defaultIcon = makeMarkerIcon("00B4CC");
 
 	// Show Markers
 	self.showMarkers = function(){
-        for (var i = 0; i < markers.length; i++) {
+        for (let i = 0; i < markers.length; i++) {
           markers[i].setMap(map);
           markers[i].setVisible(true);
         }
@@ -57,19 +105,21 @@ const ViewModel = function(){
 
 	// Hide Markers
 	self.hideMarkers = function(){
-		 for (var i = 0; i < markers.length; i++) {
+		 for (let i = 0; i < markers.length; i++) {
           markers[i].setMap(null);
           markers[i].setVisible(false);
         }
 	}
 
-	// Marker Creation
+	// Marker Creation, list population
 	self.createMarkers = function(places){
 		self.hideMarkers()
-		// let bounds = new google.maps.LatLngBounds();
+		// Clears placesList
+		self.placesList.removeAll()
 		// Iterate through places and create markers for each
 		for (let i = 0; i < places.length; i++){
 			let place = places[i];
+			console.log(place.icon)
 			let marker = new google.maps.Marker({
 				title: place.name,
 				position: place.geometry.location,
@@ -78,22 +128,47 @@ const ViewModel = function(){
 				id: i
 			});
 			// Add click listeners to generate info windows
-			marker.addListener('click', function(){
+			marker.addListener("click", function(){
 				map.setCenter(this.position);
 				map.setZoom(16);
+				self.getWikipedia(place, place.name, place.formatted_address);
 				infoWindow.open(map, this);
-				infoWindow.setContent(this.title);
-			})
+			});
+			// Push markers to markers array
 			markers.push(marker);
+			// Adds marker to Place object
 			place.marker = marker;
 			self.placesList.push(new Place(place));
 		}
 		self.showMarkers();
-		//map.fitBounds(bounds)
+	}
+
+	// Wikipedia API
+	self.getWikipedia = function(place, name, address){
+		// Fires off Ajax request
+		$.ajax({
+			url: `https://en.wikipedia.org/w/api.php?action=opensearch&search=${name}&format=json&callback=wiwikiCallback`,
+			dataType: "jsonp",
+			jsonp: "callback"
+		}).done(function(res){
+			// Concats content for info window - wikiSnippet and wikiLink utilize inline conditionals
+			// to see if any data is available to be retrieved, else returns empty string
+			let wikiSnippet = res[2][0] ? `<p class='info'>${res[2][0]}</p>` : "";
+			let wikiLink = res[1][0] ? `<p class='info'><a href='https://en.wikipedia.org/wiki/${res[1][0]}'>Read More</></p>` : "";
+			let infoWindowContent = `<p class='info wiki-title'>${name}</p>
+									 <p class='info'>${address}</p>`
+									 + wikiSnippet
+									 + wikiLink;
+			infoWindow.setContent(infoWindowContent);
+		}).fail(function(err){
+			console.log(err);
+		})
 	}
 
 	// Search Box
-	self.searchTextBox = ko.observable('');
+	self.searchTextBox = ko.observable("");
+
+	// Places Service from Google Maps API
 	const placesService = new google.maps.places.PlacesService(map);
 
 	// Search Submit
@@ -102,21 +177,11 @@ const ViewModel = function(){
 			query: self.searchTextBox(),
 			bounds: map.getBounds()
 		}, function(places){
-			if (places.length < 1){
-				alert('No results found!');
+			if (places.length === 0){
+				alert("No results found!");
 			}
 			self.createMarkers(places);
-			self.returnResults(places);
-		});
-	}
-
-	// For sidenav results
-	self.returnResults = function(places){
-		// Clear list of places
-		self.placesList.removeAll()
-		// Push new list of Place objects to placesList array
-		places.forEach(function(place){
-			self.placesList.push(new Place(place));
+			map.setZoom(12);
 		});
 	}
 
@@ -125,18 +190,50 @@ const ViewModel = function(){
 		let marker = place.marker();
 		marker.setAnimation(google.maps.Animation.BOUNCE);
 		setTimeout(function(){ marker.setAnimation(null); }, 1500);
-
 		map.setCenter(place.location());
 		map.setZoom(16);
-
+		self.getWikipedia(place, place.name(), place.formatted_address());
 		infoWindow.open(map, marker);
-		infoWindow.setContent(place.name());
 	}
 
+	// Takes a place and adds it to the favoritePlaces array
+	self.addToFavorites = function(place){
+		self.favoritePlaces.push(place);
+	}
+
+	// Removes a place from the favoritePlaces arrays
+	self.removeFavorite = function(place){
+		let index = self.favoritePlaces.indexOf(place);
+		console.log(index)
+		if(index > -1){
+			self.favoritePlaces.splice(index, 1);
+		}
+	}
+
+	// Clears entire placesList
+	self.clearResults = function(place){
+		self.hideMarkers()
+		self.placesList.removeAll();
+	}
+
+	// Clears entire favoritePlaces list
+	self.clearFavorites = function(place){
+		self.favoritePlaces.removeAll();
+	}
+
+
+	// Initialize app with default places
 	self.createMarkers(initialPlaces);
+
+}
+
+// Error Handling
+function errorHandler(){
+	alert("Something went wrong");
 }
 
 
+// Initialize map with styles, properties
 function initMap(){
 	let styles = [
 	  {
@@ -432,15 +529,17 @@ function initMap(){
 	  }
 	];
 
-	map = new google.maps.Map(document.getElementById('map'), {
-		center: {lat: 37.7749, lng: -122.4194},
+	map = new google.maps.Map(document.getElementById("map"), {
+		center: {lat: 38.904722, lng: -77.016389},
 		styles: styles,
 		zoom: 12,
 		mapTypeControl: false
 	});
 };
 
+// Intialize App
 var initApp = function() {
     initMap();
     ko.applyBindings(new ViewModel());
+    sideMenuOpen();
 };
