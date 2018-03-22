@@ -6,18 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">  
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <!-- Normalize -->
+    <link rel="stylesheet" type="text/css" href="./css/normalize.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" type="text/css" href="./css/fontawesome-all.min.css">
     <!-- Style -->
     <link rel="stylesheet" type="text/css" href="./css/style.css">
-    <!-- Knockout JS -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
-    <!-- APP -->
-    <script src="./js/app.js"></script>
+    <!-- Media Queries -->
+    <link rel="stylesheet" type="text/css" href="./css/media_queries.css">
   </head>
   <body>
 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
       <div class="container">
-        <a class="navbar-brand" href="#">Neighborhood Map</a>     
+        <a class="navbar-brand" href="#">Neighborhood Map</a>
+        <button class="navbar-toggler toggler" id="toggler" type="button">
+          <span class="navbar-toggler-icon"></span>
+        </button>  
           <form class="form-inline my-2 my-md-0">
             <input class="form-control" type="text" placeholder="Search" data-bind="textInput:searchTextBox">
             <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:searchTextBoxSubmit">Submit</button></span>
@@ -28,13 +33,25 @@
     <div class="row">
       <!-- sidenav -->
       <div class="col-md-3 sidenav">
+          <button id="toggle-off" type="button">
+            <i class="far fa-arrow-alt-circle-left fa-2x"></i>
+          </button> 
           <h2>Places</h2>
           <div class="btn-row">
             <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:showMarkers">Show Markers</button></span> <span class="input-group-btn"><button class="btn btn-prime" type="button" data-bind="click:hideMarkers">Hide Markers</button></span>
           </div>
-          <ul class="list-group" data-bind="foreach: placesList">
-            <li class="list-group-item" data-bind="click: $parent.openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span data-bind="text:name"></span></li>
-          </ul>
+          <div class="favorites">
+            <h4>Favorites</h4>
+            <ul class="list-group" data-bind="foreach: favoritePlaces"><li class="list-group-item" data-bind="click: $parent.openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span data-bind="text:name"></span> <i class="far fa-trash-alt" data-bind="click: $parent.removeFavorite"></i></li></ul>
+            <button class="btn btn-danger" type="button" data-bind="click:clearFavorites">Clear Favorites</button>
+          </div>
+          <div class="search-results">
+            <h4>Search Results</h4>
+            <ul class="list-group" data-bind="foreach: placesList">
+              <li class="list-group-item" data-bind="click: $parent.openInfoWindow"><img class="place-icon" data-bind="attr:{src: icon}" /><span class="location-name" data-bind="text:name"></span> <span><i class="far fa-heart" data-bind="click: $parent.addToFavorites"></i></span></li>
+            </ul>
+            <button class="btn btn-danger" type="button" data-bind="click:clearResults">Clear Results</button>
+          </div>
       </div>
       <!--- Google Map -->
       <div class="col-md-9">
@@ -43,14 +60,18 @@
       </div>
     </div>
     <!-- Jquery -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <!-- Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <!-- Bootstrap -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Knockout JS -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+    <!-- APP -->
+    <script src="./js/app.js"></script>
     <!-- Google Maps API -->
     <script async defer
-      src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCMedjoFBohd-qSUDsSCiYfQooow6GBQZc&callback=initApp">
+      src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCMedjoFBohd-qSUDsSCiYfQooow6GBQZc&callback=initApp" onerror="errorHandler()">
     </script>
   </body>
 </html>
