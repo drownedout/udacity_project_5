@@ -5,9 +5,10 @@
 		left: -100%;
 		z-index: 9999;
 		background: #fff;
-		min-height: 100vh;
+		min-height: 110vh;
 		width: 60%;
 		text-align: left;
+		padding-bottom: 10%;
     }
     .sidenav > h2 {
     	margin-left: 0;
