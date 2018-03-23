@@ -1,5 +1,3 @@
-"use strict";
-
 /* globals ko, google, $ */
 let map;
 
@@ -70,7 +68,8 @@ const Place = function(data){
 };
 
 const ViewModel = function(){
-
+	"use strict";
+	
 	const self = this;
 
 	let markers = [];
