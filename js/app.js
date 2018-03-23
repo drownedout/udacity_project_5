@@ -66,7 +66,7 @@ const Place = function(data){
 	this.formatted_address = ko.observable(data.formatted_address);
 	this.icon = ko.observable(data.icon);
 	this.marker = ko.observable(data.marker);
-}
+};
 
 const ViewModel = function(){
 
@@ -100,7 +100,7 @@ const ViewModel = function(){
           markers[i].setMap(map);
           markers[i].setVisible(true);
         }
-	}
+	};
 
 	// Hide Markers
 	self.hideMarkers = function(){
@@ -108,15 +108,15 @@ const ViewModel = function(){
           markers[i].setMap(null);
           markers[i].setVisible(false);
         }
-	}
+	};
 
 	// Marker Creation, list population
 	self.createMarkers = function(places){
 		// Hide Markers
-		self.hideMarkers()
-		markers = []
+		self.hideMarkers();
+		markers = [];
 		// Clears placesList
-		self.placesList.removeAll()
+		self.placesList.removeAll();
 		// Iterate through places and create markers for each
 		for (let i = 0; i < places.length; i++){
 			let place = places[i];
@@ -141,8 +141,8 @@ const ViewModel = function(){
 			self.placesList.push(new Place(place));
 		}
 		self.showMarkers();
-		self.getStreetView(self.placesList()[0])
-	}
+		self.getStreetView(self.placesList()[0]);
+	};
 
 	// Wikipedia API
 	self.getWikipedia = function(name, address){
@@ -157,13 +157,13 @@ const ViewModel = function(){
 			let wikiLink = res[1][0] ? `<p class='info'><a href='https://en.wikipedia.org/wiki/${res[1][0]}'>Read More</></p>` : "";
 			let infoWindowContent = `<p class='info wiki-title'>${name}</p>
 									 <p class='info'>${address}</p>
-									 <p class='info'>${wikiSnippet}</p>`
-									 + wikiLink;
+									 <p class='info'>${wikiSnippet}</p>` +
+									 wikiLink;
 			infoWindow.setContent(infoWindowContent);
 		}).fail(function(err){
 			console.log(err);
 		});
-	}
+	};
 
 	// Search Box
 	self.searchTextBox = ko.observable("");
@@ -184,7 +184,7 @@ const ViewModel = function(){
 			self.createMarkers(places);
 			map.setZoom(12);
 		});
-	}
+	};
 
 	// Open Window Method
 	self.openInfoWindow = function(place){
@@ -195,7 +195,7 @@ const ViewModel = function(){
 		map.setZoom(16);
 		self.getWikipedia(place.name(), place.formatted_address());
 		infoWindow.open(map, marker);
-	}
+	};
 
 	self.getStreetView = function(place){
 		if(google.maps.StreetViewStatus.OK){
@@ -208,17 +208,17 @@ const ViewModel = function(){
 					heading: 40,
 					pitch: 0
 				}
-			}
+			};
 			let streetViewPanorama = new google.maps.StreetViewPanorama(
 				document.getElementById('street-view-image'), streetViewOptions
 			);
 		}
-	}
+	};
 
 	self.openSideBarInfo = function(place){
 		self.openInfoWindow(place);
 		self.getStreetView(place);
-	}
+	};
 
 	// Takes a place and adds it to the favoritePlaces array
 	self.addToFavorites = function(place){
@@ -227,7 +227,7 @@ const ViewModel = function(){
 		if (index < 0){
 			self.favoritePlaces.push(place);
 		}
-	}
+	};
 
 	// Removes a place from the favoritePlaces arrays
 	self.removeFavorite = function(place){
@@ -236,24 +236,24 @@ const ViewModel = function(){
 		if(index > -1){
 			self.favoritePlaces.splice(index, 1);
 		}
-	}
+	};
 
 	// Clears entire placesList
 	self.clearResults = function(place){
-		self.hideMarkers()
+		self.hideMarkers();
 		self.placesList.removeAll();
-	}
+	};
 
 	// Clears entire favoritePlaces list
 	self.clearFavorites = function(place){
 		self.favoritePlaces.removeAll();
-	}
+	};
 
 
 	// Initialize app with default places
 	self.createMarkers(initialLocations);
 
-}
+};
 
 // Error Handling
 function errorHandler(){
@@ -563,7 +563,7 @@ function initMap(){
 		zoom: 12,
 		mapTypeControl: false
 	});
-};
+}
 
 // Intialize App
 var initApp = function() {

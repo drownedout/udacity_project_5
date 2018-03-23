@@ -23,7 +23,6 @@
 .sidenav {
 	padding: 1rem 2rem;
 	height: 100vh;
-	max-height: 100vh;
 	transition: ease-in-out all .4s;
 	overflow-y: scroll;
 }
