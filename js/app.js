@@ -69,7 +69,7 @@ const Place = function(data){
 
 const ViewModel = function(){
 	"use strict";
-	
+
 	const self = this;
 
 	let markers = [];
@@ -188,7 +188,7 @@ const ViewModel = function(){
 			self.getWikipedia(place.name, place.formatted_address);
 			infoWindow.open(map, this);
 		});
-	}
+	};
 
 	// Open Window Method
 	self.openInfoWindow = function(place){
