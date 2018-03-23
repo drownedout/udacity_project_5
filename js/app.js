@@ -1,7 +1,8 @@
 "use strict";
 
-// Global Var
+/* globals ko, google, $ */
 let map;
+
 
 // SideNav Toggle - for responsive navigation
 
@@ -128,12 +129,7 @@ const ViewModel = function(){
 				id: i
 			});
 			// Add click listeners to generate info windows
-			marker.addListener("click", function(){
-				map.setCenter(this.position);
-				map.setZoom(16);
-				self.getWikipedia(place.name, place.formatted_address);
-				infoWindow.open(map, this);
-			});
+			self.addWindowListener(marker, place);
 			// Push markers to markers array
 			markers.push(marker);
 			// Adds marker to Place object
@@ -185,6 +181,15 @@ const ViewModel = function(){
 			map.setZoom(12);
 		});
 	};
+
+	self.addWindowListener = function(marker, place){
+		marker.addListener("click", function(){
+			map.setCenter(this.position);
+			map.setZoom(16);
+			self.getWikipedia(place.name, place.formatted_address);
+			infoWindow.open(map, this);
+		});
+	}
 
 	// Open Window Method
 	self.openInfoWindow = function(place){
