@@ -278,6 +278,7 @@ const ViewModel = function(){
 	self.clearResults = function(place){
 		self.hideMarkers();
 		self.placesList.removeAll();
+		self.filteredList.removeAll();
 	};
 
 	// Clears entire favoritePlaces list
