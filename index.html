@@ -25,7 +25,10 @@
         </button>  
           <form class="form-inline my-2 my-md-0">
             <input class="form-control" type="text" placeholder="Search" data-bind="textInput:searchTextBox">
-            <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:searchTextBoxSubmit">Submit</button></span>
+            <span class="input-group-btn"><button class="btn btn-secondary" type="button" data-bind="click:searchTextBoxSubmit"><i class="fas fa-search"></i></button></span>
+          </form>
+          <form class="form-inline my-2 my-md-0 filter-search">
+            <input class="form-control" placeholder="Filter" type="search" data-bind="textInput: filterQuery, valueUpdate: 'afterkeydown',event: {keyup: filterSearch}">
           </form>
         </div> <!-- navbar-collapse -->
       </div> <!-- container -->
@@ -48,7 +51,7 @@
           </div> <!-- favorites -->
           <div class="search-results">
             <h4>Search Results</h4>
-            <ul class="list-group" data-bind="foreach: placesList">
+            <ul class="list-group" data-bind="foreach: filteredList">
               <li class="list-group-item" data-bind="click: $parent.openSideBarInfo"><img class="place-icon" data-bind="attr:{src: icon}" /><span class="location-name" data-bind="text:name"></span> <span><i class="far fa-heart" data-bind="click: $parent.addToFavorites"></i></span></li>
             </ul>
             <button class="btn btn-danger" type="button" data-bind="click:clearResults">Clear Results</button>

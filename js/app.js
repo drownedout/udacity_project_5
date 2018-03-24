@@ -77,6 +77,7 @@ const ViewModel = function(){
 
 	// Initialize arrays
 	self.placesList = ko.observableArray();
+	self.filteredList = ko.observableArray();
 	self.favoritePlaces = ko.observableArray();
 
 	// Make Marker
@@ -117,6 +118,7 @@ const ViewModel = function(){
 		markers = [];
 		// Clears placesList
 		self.placesList.removeAll();
+		self.filteredList.removeAll();
 		// Iterate through places and create markers for each
 		for (let i = 0; i < places.length; i++){
 			let place = places[i];
@@ -134,6 +136,7 @@ const ViewModel = function(){
 			// Adds marker to Place object
 			place.marker = marker;
 			self.placesList.push(new Place(place));
+			self.filteredList.push(new Place(place));
 		}
 		self.showMarkers();
 		self.getStreetView(self.placesList()[0]);
@@ -156,15 +159,38 @@ const ViewModel = function(){
 									 wikiLink;
 			infoWindow.setContent(infoWindowContent);
 		}).fail(function(err){
-			console.log(err);
+			alert(err);
 		});
 	};
 
-	// Search Box
-	self.searchTextBox = ko.observable("");
+
+	// Filter Text Query
+	self.filterQuery = ko.observable('');
+
+	self.filterSearch = function() {
+        let query = self.filterQuery().toLowerCase();
+        // Clear the array
+        self.filteredList.removeAll();
+        // Iterate through each item in the placesList
+        self.placesList().forEach(function(place){
+        	place.marker().setMap(null);
+            place.marker().setVisible(false);
+
+            if(place.name().toLowerCase().indexOf(query) >= 0) {
+                self.filteredList.push(place);
+            }
+        });
+
+        self.filteredList().forEach(function(place) {
+            place.marker().setVisible(true);
+        });
+    };
 
 	// Places Service from Google Maps API
 	const placesService = new google.maps.places.PlacesService(map);
+
+	// Search Box
+	self.searchTextBox = ko.observable("");
 
 	// Search Submit
 	self.searchTextBoxSubmit = function(){
@@ -181,8 +207,11 @@ const ViewModel = function(){
 		});
 	};
 
+	// Adds a click listener to a marker
 	self.addWindowListener = function(marker, place){
 		marker.addListener("click", function(){
+			marker.setAnimation(google.maps.Animation.BOUNCE);
+			setTimeout(function(){ marker.setAnimation(null); }, 1500);
 			map.setCenter(this.position);
 			map.setZoom(16);
 			self.getWikipedia(place.name, place.formatted_address);
