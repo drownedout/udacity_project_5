@@ -173,15 +173,18 @@ const ViewModel = function(){
         self.filteredList.removeAll();
         // Iterate through each item in the placesList
         self.placesList().forEach(function(place){
+        	// Remove markers
         	place.marker().setMap(null);
             place.marker().setVisible(false);
-
+            // If there's a match, push to the filtered list,
+            // making it visible
             if(place.name().toLowerCase().indexOf(query) >= 0) {
                 self.filteredList.push(place);
             }
         });
-
+        // Make each marker visible in the filtered list
         self.filteredList().forEach(function(place) {
+        	place.marker().setMap(map);
             place.marker().setVisible(true);
         });
     };
